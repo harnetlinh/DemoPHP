@@ -1,3 +1,8 @@
+<?php
+session_start();
+$_SESSION['user'] = 'admin';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,6 +14,13 @@
 
 <body>
     <h1>TO-DO List</h1>
+    <?php
+    if (!isset($_SESSION['user'])) {
+        echo "<h1>THERE IS NO SESSION</h1>";
+    } else {
+        echo "<h1>WELCOME " . $_SESSION['user'] . "</h1>";
+    }
+    ?>
     <a href="create.php">Create new task</a>
     <table>
         <tr>
@@ -19,17 +31,32 @@
             <th>Task status</th>
             <th>Action</th>
         </tr>
-        <tr>
-            <td>1</td>
-            <td>Task 1</td>
-            <td>Task 1 description</td>
-            <td>2021-12-31</td>
-            <td>Done</td>
-            <td>
-                <a href="edit.php">Edit</a>
-                <a href="delete.php">Delete</a>
-            </td>
-        </tr>
+        <?php
+        $tasks = [];
+
+        
+        $decoded_tasks = [];
+        if (isset($_SESSION['tasks'])) {
+            $tasks = $_SESSION['tasks'];
+            $decoded_tasks = json_decode($tasks, true);
+        }
+
+        for ($i=0; $i < count($decoded_tasks); $i++) { 
+            echo "
+            <tr>
+                <td>".($i+1)."</td>
+                <td>".$decoded_tasks[$i]['name']."</td>
+                <td>".$decoded_tasks[$i]['description']."</td>
+                <td>".$decoded_tasks[$i]['deadline']."</td>
+                <td>".$decoded_tasks[$i]['status']."</td>
+                <td>
+                    <a href='edit.php'>Edit</a>
+                    <a href='delete.php'>Delete</a>
+                </td>
+            </tr>
+            ";
+        }
+        ?>
     </table>
 </body>
 
