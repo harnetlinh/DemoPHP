@@ -1,6 +1,6 @@
 <?php
-session_start();
-$_SESSION['user'] = 'admin';
+session_start(); // Start using the session
+$_SESSION['user'] = 'admin'; // define the session variable user
 ?>
 
 <!DOCTYPE html>
@@ -38,7 +38,7 @@ $_SESSION['user'] = 'admin';
         $decoded_tasks = [];
         if (isset($_SESSION['tasks'])) {
             $tasks = $_SESSION['tasks'];
-            $decoded_tasks = json_decode($tasks, true);
+            $decoded_tasks = json_decode($tasks, true); // convert the tasks from text to array
         }
 
         for ($i=0; $i < count($decoded_tasks); $i++) { 
