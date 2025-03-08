@@ -1,4 +1,6 @@
 <?php
+require_once './Repositories/Task.php';
+require_once './database.php';
 session_start(); // Start using the session
 $_SESSION['user'] = 'admin'; // define the session variable user
 ?>
@@ -32,30 +34,25 @@ $_SESSION['user'] = 'admin'; // define the session variable user
             <th>Action</th>
         </tr>
         <?php
-        $tasks = [];
+        $taskObject = new Task($conn);
+        $tasks = $taskObject->getAll();
 
-        
-        $decoded_tasks = [];
-        if (isset($_SESSION['tasks'])) {
-            $tasks = $_SESSION['tasks'];
-            $decoded_tasks = json_decode($tasks, true); // convert the tasks from text to array
-        }
-
-        for ($i=0; $i < count($decoded_tasks); $i++) { 
+        foreach ($tasks as $key => $task) {
             echo "
             <tr>
-                <td>".($i+1)."</td>
-                <td>".$decoded_tasks[$i]['name']."</td>
-                <td>".$decoded_tasks[$i]['description']."</td>
-                <td>".$decoded_tasks[$i]['deadline']."</td>
-                <td>".$decoded_tasks[$i]['status']."</td>
+                <td>" . ($key + 1) . "</td>
+                <td>" . $task['name'] . "</td>
+                <td>" . $task['description'] . "</td>
+                <td>" . $task['deadline'] . "</td>
+                <td>" . $task['status'] . "</td>
                 <td>
-                    <a href='edit.php'>Edit</a>
-                    <a href='delete.php'>Delete</a>
+                    <a href='edit.php?id=" . $task['id'] . "'>Edit</a>
+                    <a href='delete.php?id=" . $task['id'] . "'>Delete</a>
                 </td>
             </tr>
             ";
         }
+
         ?>
     </table>
 </body>

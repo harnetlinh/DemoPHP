@@ -1,5 +1,7 @@
 <?php
 session_start();
+require_once 'Repositories/Task.php';
+require_once 'database.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,9 +31,9 @@ session_start();
     <br>
     <label for="status">Task status</label>
     <select name="status" id="status">
-        <option value="Not started">Not started</option>
-        <option value="In progress">In progress</option>
-        <option value="Completed">Completed</option>
+        <option value="0">Not started</option>
+        <option value="1">In progress</option>
+        <option value="2">Completed</option>
     </select>
     <br>
     <button type="submit">Create task</button>
@@ -51,15 +53,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // check if the form was submitted t
         'status' => $status
     ];
 
-    $tasks = [];
-    if (isset($_SESSION['tasks'])) { // if there are tasks in the session
-        $tasks_in_text = $_SESSION['tasks']; // get the tasks in text format
-        $tasks = json_decode($tasks_in_text, true); // convert the tasks from text to array
-    }
+    $taskObject = new Task($conn);
+    $taskObject->name = $task['name'];
+    $taskObject->description = $task['description'];
+    $taskObject->deadline = $task['deadline'];
+    $taskObject->status = intval($task['status']);
 
-    $tasks[] = $task; // add the new task to the $tasks array // is the same as array_push($tasks, $task);
-    $_SESSION['tasks'] = json_encode($tasks); // save the tasks in the session
-    echo "<h1>Task created successfully</h1>";
+    $result = $taskObject->create();
+
+    echo "<h1>Task created  $result </h1>";
 }
 ?>
 <hr>
